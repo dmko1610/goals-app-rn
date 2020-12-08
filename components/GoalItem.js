@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
 });
 
 GoalItem.propTypes = {
-  title: PropTypes.title,
+  title: PropTypes.string,
   onDelete: PropTypes.func,
-  id: PropTypes.id,
+  id: PropTypes.string,
 };
 
 export default GoalItem;
