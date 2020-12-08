@@ -1,114 +1,59 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useState} from "react";
+import {View, Button, FlatList, StyleSheet} from "react-native";
+import GoalItem from "./components/GoalItem";
+import GoalInput from "./components/GoalInput";
+import { ADD_NEW } from "./constants/TextConstants";
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+export default function App() {
+  const [courseGoals, setCourseGoals] = useState([]);
+  const [isAddMode, setIsAddMode] = useState(false);
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  const addGoalHandler = (goalName) => {
+    setCourseGoals((currentGoals) => [
+      ...currentGoals,
+      {
+        id: Math.random().toString(),
+        value: goalName,
+      },
+    ]);
+    setIsAddMode(false);
+  };
 
-const App: () => React$Node = () => {
+  const removeGoalHandler = (goalId) => {
+    setCourseGoals((currentGoals) =>
+      currentGoals.filter((goal) => goal.id !== goalId),
+    );
+  };
+
+  const cancelGoalAdditionHandler = () => {
+    setIsAddMode(false);
+  };
+
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <View style={styles.screen}>
+      <Button title={ADD_NEW} onPress={() => setIsAddMode(true)} />
+      <GoalInput
+        visible={isAddMode}
+        onAddGoal={addGoalHandler}
+        onCancel={cancelGoalAdditionHandler}
+      />
+      <FlatList
+        keyExtractor={(item) => item.id}
+        data={courseGoals}
+        renderItem={(itemData) => (
+          <GoalItem
+            id={itemData.item.id}
+            title={itemData.item.value}
+            onDelete={removeGoalHandler}
+          />
+        )}
+      />
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  screen: {
+    padding: 50,
   },
 });
-
-export default App;
